@@ -48,27 +48,21 @@
   </div>
 </div>
 
-<!-- Jar Page -->
-<div class="page" id="pageJar">
+<!-- Gallery Page -->
+<div class="page" id="pageGallery">
   <div class="content">
-    <div class="jar-wrap">
-      <div class="jar-title">자료 저금통</div>
-      <div class="jar-count" id="jarCount">0개의 자료가 담겨있어요</div>
-      <div class="jar-sort">
-        <button data-sort="date" class="active" onclick="setJarSort('date')">날짜순</button>
-        <button data-sort="category" onclick="setJarSort('category')">카테고리</button>
-        <button data-sort="frequency" onclick="setJarSort('frequency')">빈도수</button>
-        <button data-sort="length" onclick="setJarSort('length')">내용량</button>
-      </div>
-      <div class="jar-container">
-        <div class="jar-lid"></div>
-        <div class="jar-neck"></div>
-        <div class="jar-body">
-          <div class="jar-balls" id="jarBalls"></div>
-        </div>
-      </div>
-      <div class="jar-legend" id="jarLegend"></div>
+    <div class="gallery-header">
+      <h3>자료 갤러리</h3>
+      <span class="count" id="galleryCount">0개 자료</span>
     </div>
+    <div class="gallery-filter">
+      <button data-filter="all" class="active" onclick="setGalleryFilter('all')">전체</button>
+      <button data-filter="0" onclick="setGalleryFilter('0')">&#x1F3E6; 국민연금</button>
+      <button data-filter="1" onclick="setGalleryFilter('1')">&#x1F6E1;&#xFE0F; 고용/산재</button>
+      <button data-filter="2" onclick="setGalleryFilter('2')">&#x1F3E5; 건강/요양</button>
+      <button data-filter="3" onclick="setGalleryFilter('3')">&#x1F517; 연계센터</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
   </div>
 </div>
 
@@ -77,18 +71,9 @@
   <div class="content" id="statsContent"></div>
 </div>
 
-<!-- Ball Detail Popup -->
-<div class="ball-popup" id="ballPopup" onclick="if(event.target===this)closeBallPopup()">
-  <div class="ball-popup-card">
-    <div class="ball-popup-header">
-      <div class="ball-popup-dot" id="popupDot"></div>
-      <span class="ball-popup-cat" id="popupCat"></span>
-    </div>
-    <div class="ball-popup-date" id="popupDate"></div>
-    <div class="ball-popup-title" id="popupTitle"></div>
-    <div class="ball-popup-body" id="popupBody"></div>
-    <button class="ball-popup-close" onclick="closeBallPopup()">닫기</button>
-  </div>
+<!-- Detail Popup -->
+<div class="detail-popup" id="detailPopup" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-card" id="detailContent"></div>
 </div>
 
 <!-- Bottom Navigation -->
@@ -96,8 +81,8 @@
   <div class="nav-item active" id="navList" onclick="switchPage('list')">
     <span class="nav-icon">&#x1F4CB;</span>자료
   </div>
-  <div class="nav-item" id="navJar" onclick="switchPage('jar')">
-    <span class="nav-icon">&#x1FAD9;</span>자료통
+  <div class="nav-item" id="navGallery" onclick="switchPage('gallery')">
+    <span class="nav-icon">&#x1F5BC;&#xFE0F;</span>갤러리
   </div>
   <div class="nav-item" id="navStats" onclick="switchPage('stats')">
     <span class="nav-icon">&#x1F4CA;</span>통계
@@ -116,6 +101,16 @@
     <textarea id="docBody" placeholder="자료 내용을 작성하세요..."></textarea>
     <label>태그 (쉼표로 구분)</label>
     <input type="text" id="docTags" placeholder="예: 취득신고, 요율변경, 정산">
+    <label>이미지 첨부</label>
+    <div class="upload-area">
+      <input type="file" id="docImage" accept="image/*" onchange="handleImageUpload()">
+      <div id="imagePreview"></div>
+    </div>
+    <label>파일 첨부</label>
+    <div class="upload-area">
+      <input type="file" id="docFile" onchange="handleFileUpload()">
+      <div class="file-info" id="fileInfo"></div>
+    </div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeWriteModal()">취소</button>
       <button class="btn-save" onclick="saveDoc()">저장</button>
@@ -127,6 +122,7 @@
 <script src="js/config.js"></script>
 <script src="js/helpers.js"></script>
 <script src="js/api.js"></script>
+<script src="js/upload.js"></script>
 <script src="js/docs.js"></script>
 <script src="js/jar.js"></script>
 <script src="js/stats.js"></script>

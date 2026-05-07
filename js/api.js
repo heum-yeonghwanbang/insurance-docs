@@ -32,7 +32,7 @@ async function loadData() {
   }
   renderTabs();
   renderDocs();
-  if (activePage === 'jar') renderJar();
+  if (activePage === 'gallery') renderGallery();
   if (activePage === 'stats') renderStats();
 }
 

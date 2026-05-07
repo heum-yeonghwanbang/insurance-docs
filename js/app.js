@@ -1,14 +1,14 @@
 // === Page Navigation ===
 function switchPage(page) {
   activePage = page;
-  ['List', 'Jar', 'Stats'].forEach(p => {
+  ['List', 'Gallery', 'Stats'].forEach(p => {
     const key = p.toLowerCase();
     const el = document.getElementById('page' + p);
     const nav = document.getElementById('nav' + p);
     if (el) el.classList.toggle('active', page === key);
     if (nav) nav.classList.toggle('active', page === key);
   });
-  if (page === 'jar') renderJar();
+  if (page === 'gallery') renderGallery();
   if (page === 'stats') renderStats();
   if (page === 'list') loadData();
 }

@@ -47,13 +47,17 @@ function renderDocs() {
       ? '<div class="doc-actions"><button onclick="editDoc(\'' + e.id + '\')">수정</button><button class="del" onclick="deleteDoc(\'' + e.id + '\')">삭제</button></div>'
       : '';
     const tags = (e.tags || []).map(t => '<span class="doc-tag">' + escHtml(t) + '</span>').join('');
+    const imgHtml = (e.image && e.image.url) ? '<img src="' + escHtml(e.image.url) + '" style="width:100%;max-height:200px;object-fit:cover;border-radius:8px;margin-bottom:8px;">' : '';
+    const fileHtml = e.file ? '<a href="' + escHtml(e.file.url) + '" target="_blank" download style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#1565C0;font-weight:600;text-decoration:none;margin-top:6px;">&#x1F4CE; ' + escHtml(e.file.name) + '</a>' : '';
     return '<div class="doc-card" style="border-left-color:' + cat.color + '">' + actions +
       '<div class="doc-author">' + escHtml(e.author || '익명') + '</div>' +
       '<span class="category-badge" style="background:' + cat.color + '">' + cat.icon + ' ' + cat.name + '</span>' +
       '<div class="doc-date">' + formatDate(e.date) + '</div>' +
+      imgHtml +
       '<div class="doc-title">' + escHtml(e.title) + '</div>' +
       '<div class="doc-body">' + escHtml(e.body) + '</div>' +
       (tags ? '<div class="doc-tags">' + tags + '</div>' : '') +
+      fileHtml +
       '</div>';
   }).join('');
 }
@@ -91,6 +95,26 @@ async function saveDoc() {
   const tagsStr = document.getElementById('docTags').value.trim();
   const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
 
+  // Handle image upload
+  let imageData = null;
+  const imgInput = document.getElementById('docImage');
+  if (imgInput && imgInput.files.length) {
+    try {
+      setSync('loading');
+      imageData = await uploadFileToRepo(imgInput.files[0]);
+    } catch(e) { alert('이미지 업로드 실패: ' + e.message); }
+  }
+
+  // Handle file upload
+  let fileData = null;
+  const fileInput = document.getElementById('docFile');
+  if (fileInput && fileInput.files.length) {
+    try {
+      setSync('loading');
+      fileData = await uploadFileToRepo(fileInput.files[0]);
+    } catch(e) { alert('파일 업로드 실패: ' + e.message); }
+  }
+
   if (editingId) {
     const entry = entries.find(e => e.id === editingId);
     if (entry) {
@@ -98,9 +122,11 @@ async function saveDoc() {
       entry.body = body;
       entry.category = catIdx;
       entry.tags = tags;
+      if (imageData) entry.image = imageData;
+      if (fileData) entry.file = fileData;
     }
   } else {
-    entries.push({
+    const newEntry = {
       id: genId(),
       author: getMyNickname(),
       category: catIdx,
@@ -108,13 +134,17 @@ async function saveDoc() {
       body: body,
       tags: tags,
       date: new Date().toISOString()
-    });
+    };
+    if (imageData) newEntry.image = imageData;
+    if (fileData) newEntry.file = fileData;
+    entries.push(newEntry);
   }
 
   await saveData();
   closeWriteModal();
   renderTabs();
   renderDocs();
+  if (activePage === 'gallery') renderGallery();
 }
 
 function editDoc(id) {
