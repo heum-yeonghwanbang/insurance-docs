@@ -1,10 +1,11 @@
 // === GitHub API Storage ===
 async function loadData() {
+  // Show nickname setup if not set, but still load data
   if (!getMyNickname()) {
     document.getElementById('nicknameSetup').style.display = 'block';
-    return;
+  } else {
+    document.getElementById('nicknameSetup').style.display = 'none';
   }
-  document.getElementById('nicknameSetup').style.display = 'none';
   setSync('loading');
   try {
     const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, {
@@ -12,10 +13,8 @@ async function loadData() {
       cache: 'no-store'
     });
     if (res.status === 404) {
-      // First time: create the file
       entries = [];
       fileSha = null;
-      await saveData();
       setSync('online');
     } else if (!res.ok) {
       throw new Error('HTTP ' + res.status);
