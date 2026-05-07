@@ -22,24 +22,32 @@ function renderAnalysis() {
     const hasAnalysis = e.analysis && e.analysis.trim();
     const analysisHtml = hasAnalysis
       ? '<div class="analysis-content">' + escHtml(e.analysis) + '</div>'
-      : '<div class="analysis-empty">아직 분석이 작성되지 않았습니다.</div>';
+      : '<div class="analysis-empty">분석 미작성</div>';
     const editBtn = isAdmin
-      ? '<button class="analysis-edit-btn" onclick="openAnalysisModal(\'' + e.id + '\')">' + (hasAnalysis ? '분석 수정' : '+ 분석 작성') + '</button>'
+      ? '<button class="analysis-edit-btn" onclick="openAnalysisModal(\'' + e.id + '\')">' + (hasAnalysis ? '수정' : '+ 작성') + '</button>'
       : '';
     const tags = (e.tags || []).map(t => '<span class="doc-tag">' + escHtml(t) + '</span>').join('');
 
     return '<div class="analysis-card">' +
-      '<div class="analysis-header">' +
-        '<span class="category-badge" style="background:' + cat.color + '">' + cat.icon + ' ' + cat.name + '</span>' +
-        '<span class="analysis-date">' + formatDate(e.date) + '</span>' +
+      '<div class="analysis-top">' +
+        '<div class="analysis-header">' +
+          '<span class="category-badge" style="background:' + cat.color + '">' + cat.icon + ' ' + cat.name + '</span>' +
+          '<span class="analysis-date">' + formatDate(e.date) + '</span>' +
+        '</div>' +
+        '<div class="analysis-title">' + escHtml(e.title) + '</div>' +
+        (tags ? '<div class="doc-tags">' + tags + '</div>' : '') +
       '</div>' +
-      '<div class="analysis-title">' + escHtml(e.title) + '</div>' +
-      '<div class="analysis-body">' + escHtml(e.body) + '</div>' +
-      (tags ? '<div class="doc-tags" style="margin:8px 0;">' + tags + '</div>' : '') +
-      '<div class="analysis-divider"></div>' +
-      '<div class="analysis-label">' + (hasAnalysis ? '&#x1F4DD; 분석 내용' : '&#x1F4AD; 분석') + '</div>' +
-      analysisHtml +
-      editBtn +
+      '<div class="analysis-columns">' +
+        '<div class="analysis-left">' +
+          '<div class="analysis-col-label">&#x1F4C4; 원본 내용</div>' +
+          '<div class="analysis-body">' + escHtml(e.body) + '</div>' +
+        '</div>' +
+        '<div class="analysis-right">' +
+          '<div class="analysis-col-label blue">&#x1F4DD; 분석</div>' +
+          analysisHtml +
+          editBtn +
+        '</div>' +
+      '</div>' +
     '</div>';
   }).join('');
 }
