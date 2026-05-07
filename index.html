@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>4대보험 자료관리</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Lock Screen -->
+<div id="lockScreen" style="position:fixed;inset:0;background:linear-gradient(135deg,#2196F3,#1565C0);z-index:9999;display:flex;justify-content:center;align-items:center;padding:20px;">
+  <div style="background:white;border-radius:20px;padding:36px 28px;width:100%;max-width:340px;box-shadow:0 8px 30px rgba(0,0,0,0.2);text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">&#x1F512;</div>
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;color:#333;">4대보험 자료관리</h2>
+    <p style="font-size:13px;color:#999;margin-bottom:20px;">비밀번호를 입력해주세요</p>
+    <input type="password" id="lockPw" placeholder="비밀번호" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-size:16px;text-align:center;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="lockErr" style="color:#e53935;font-size:13px;margin-bottom:10px;display:none;">비밀번호가 틀렸습니다</div>
+    <button onclick="checkPw()" style="width:100%;padding:12px;background:linear-gradient(135deg,#2196F3,#1565C0);color:white;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">입장하기</button>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <h1>4대보험 자료관리</h1>
+    <span class="sync-info"><span class="sync-dot" id="syncDot" style="background:#FF9800"></span><span id="syncText">연결 중...</span></span>
+  </div>
+</div>
+
+<!-- Nickname -->
+<div class="nickname-setup" id="nicknameSetup" style="display:none;">
+  <p style="font-size:14px;font-weight:600;margin-bottom:10px;">닉네임을 설정해주세요</p>
+  <input type="text" id="nicknameInput" placeholder="닉네임" maxlength="10">
+  <button onclick="saveNickname()">확인</button>
+</div>
+
+<!-- List Page -->
+<div class="page active" id="pageList">
+  <div class="tabs" id="tabs"></div>
+  <div class="content">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="검색 (제목, 내용, 태그)" oninput="onSearch()">
+    </div>
+    <button class="write-btn" onclick="openWriteModal()">+ 새 자료 작성</button>
+    <div id="docList"></div>
+  </div>
+</div>
+
+<!-- Jar Page -->
+<div class="page" id="pageJar">
+  <div class="content">
+    <div class="jar-wrap">
+      <div class="jar-title">자료 저금통</div>
+      <div class="jar-count" id="jarCount">0개의 자료가 담겨있어요</div>
+      <div class="jar-sort">
+        <button data-sort="date" class="active" onclick="setJarSort('date')">날짜순</button>
+        <button data-sort="category" onclick="setJarSort('category')">카테고리</button>
+        <button data-sort="frequency" onclick="setJarSort('frequency')">빈도수</button>
+        <button data-sort="length" onclick="setJarSort('length')">내용량</button>
+      </div>
+      <div class="jar-container">
+        <div class="jar-lid"></div>
+        <div class="jar-neck"></div>
+        <div class="jar-body">
+          <div class="jar-balls" id="jarBalls"></div>
+        </div>
+      </div>
+      <div class="jar-legend" id="jarLegend"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Page -->
+<div class="page" id="pageStats">
+  <div class="content" id="statsContent"></div>
+</div>
+
+<!-- Ball Detail Popup -->
+<div class="ball-popup" id="ballPopup" onclick="if(event.target===this)closeBallPopup()">
+  <div class="ball-popup-card">
+    <div class="ball-popup-header">
+      <div class="ball-popup-dot" id="popupDot"></div>
+      <span class="ball-popup-cat" id="popupCat"></span>
+    </div>
+    <div class="ball-popup-date" id="popupDate"></div>
+    <div class="ball-popup-title" id="popupTitle"></div>
+    <div class="ball-popup-body" id="popupBody"></div>
+    <button class="ball-popup-close" onclick="closeBallPopup()">닫기</button>
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="navList" onclick="switchPage('list')">
+    <span class="nav-icon">&#x1F4CB;</span>자료
+  </div>
+  <div class="nav-item" id="navJar" onclick="switchPage('jar')">
+    <span class="nav-icon">&#x1FAD9;</span>자료통
+  </div>
+  <div class="nav-item" id="navStats" onclick="switchPage('stats')">
+    <span class="nav-icon">&#x1F4CA;</span>통계
+  </div>
+</div>
+
+<!-- Write/Edit Modal -->
+<div class="modal-overlay" id="writeModal">
+  <div class="modal">
+    <h2 id="modalTitle">새 자료 작성</h2>
+    <label>카테고리</label>
+    <select id="docCat"></select>
+    <label>제목</label>
+    <input type="text" id="docTitle" placeholder="자료 제목">
+    <label>내용</label>
+    <textarea id="docBody" placeholder="자료 내용을 작성하세요..."></textarea>
+    <label>태그 (쉼표로 구분)</label>
+    <input type="text" id="docTags" placeholder="예: 취득신고, 요율변경, 정산">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeWriteModal()">취소</button>
+      <button class="btn-save" onclick="saveDoc()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/config.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/api.js"></script>
+<script src="js/docs.js"></script>
+<script src="js/jar.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
