@@ -39,11 +39,9 @@ function renderDocs() {
     return;
   }
 
-  const me = getMyNickname();
   container.innerHTML = filtered.map(e => {
     const cat = CATEGORIES[e.category] || CATEGORIES[0];
-    const isMe = e.author === me;
-    const actions = isMe
+    const actions = isAdmin
       ? '<div class="doc-actions"><button onclick="editDoc(\'' + e.id + '\')">수정</button><button class="del" onclick="deleteDoc(\'' + e.id + '\')">삭제</button></div>'
       : '';
     const tags = (e.tags || []).map(t => '<span class="doc-tag">' + escHtml(t) + '</span>').join('');
@@ -69,6 +67,7 @@ function onSearch() {
 
 // === Write / Edit / Delete ===
 function openWriteModal() {
+  if (!isAdmin) { alert('관리자만 작성할 수 있습니다'); return; }
   editingId = null;
   document.getElementById('modalTitle').textContent = '새 자료 작성';
   document.getElementById('docCat').innerHTML = CATEGORIES.map((c, i) =>
@@ -127,7 +126,7 @@ async function saveDoc() {
   } else {
     const newEntry = {
       id: genId(),
-      author: getMyNickname(),
+      author: ADMIN_NAME,
       category: catIdx,
       title: title,
       body: body,

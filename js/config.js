@@ -11,6 +11,10 @@ const GH_REPO = 'heum-yeonghwanbang/insurance-docs';
 const GH_FILE = 'insurance-data.json';
 const GH_TOKEN = ['gho','_YAlhwVmZLILe','dYqZffLPuv1b','Gl1t5B4cngPm'].join('');
 
+// Admin
+const ADMIN_NAME = '영환';
+const ADMIN_PW = '5221';
+
 // App state
 let entries = [];
 let activeTab = 'all';
@@ -19,3 +23,4 @@ let editingId = null;
 let fileSha = null;
 let searchQuery = '';
 let jarSort = 'date';
+let isAdmin = sessionStorage.getItem('ins_admin') === '1';
