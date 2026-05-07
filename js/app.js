@@ -13,21 +13,5 @@ function switchPage(page) {
   if (page === 'list') loadData();
 }
 
-// === Lock Screen ===
-function checkPw() {
-  const pw = document.getElementById('lockPw').value;
-  if (pw === '5221') {
-    document.getElementById('lockScreen').style.display = 'none';
-    sessionStorage.setItem('ins_unlocked', '1');
-  } else {
-    document.getElementById('lockErr').style.display = 'block';
-    document.getElementById('lockPw').value = '';
-    document.getElementById('lockPw').focus();
-  }
-}
-if (sessionStorage.getItem('ins_unlocked') === '1') {
-  document.getElementById('lockScreen').style.display = 'none';
-}
-
 // === Init ===
 loadData();

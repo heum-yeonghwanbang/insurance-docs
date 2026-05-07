@@ -1,11 +1,5 @@
 // === GitHub API Storage ===
 async function loadData() {
-  // Show nickname setup if not set, but still load data
-  if (!getMyNickname()) {
-    document.getElementById('nicknameSetup').style.display = 'block';
-  } else {
-    document.getElementById('nicknameSetup').style.display = 'none';
-  }
   setSync('loading');
   try {
     const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, {

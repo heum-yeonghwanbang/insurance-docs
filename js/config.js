@@ -7,7 +7,7 @@ const CATEGORIES = [
 ];
 
 // GitHub API
-const GH_REPO = 'heum-yeonghwanbang/emotion-diary';
+const GH_REPO = 'heum-yeonghwanbang/insurance-docs';
 const GH_FILE = 'insurance-data.json';
 const GH_TOKEN = ['gho','_YAlhwVmZLILe','dYqZffLPuv1b','Gl1t5B4cngPm'].join('');
 

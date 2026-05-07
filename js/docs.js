@@ -69,7 +69,6 @@ function onSearch() {
 
 // === Write / Edit / Delete ===
 function openWriteModal() {
-  if (!getMyNickname()) { alert('닉네임을 먼저 설정해주세요'); return; }
   editingId = null;
   document.getElementById('modalTitle').textContent = '새 자료 작성';
   document.getElementById('docCat').innerHTML = CATEGORIES.map((c, i) =>

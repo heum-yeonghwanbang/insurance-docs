@@ -9,31 +9,12 @@
 </head>
 <body>
 
-<!-- Lock Screen -->
-<div id="lockScreen" style="position:fixed;inset:0;background:linear-gradient(135deg,#2196F3,#1565C0);z-index:9999;display:flex;justify-content:center;align-items:center;padding:20px;">
-  <div style="background:white;border-radius:20px;padding:36px 28px;width:100%;max-width:340px;box-shadow:0 8px 30px rgba(0,0,0,0.2);text-align:center;">
-    <div style="font-size:48px;margin-bottom:12px;">&#x1F512;</div>
-    <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;color:#333;">4대보험 자료관리</h2>
-    <p style="font-size:13px;color:#999;margin-bottom:20px;">비밀번호를 입력해주세요</p>
-    <input type="password" id="lockPw" placeholder="비밀번호" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-size:16px;text-align:center;outline:none;margin-bottom:12px;" onkeydown="if(event.key==='Enter')checkPw()">
-    <div id="lockErr" style="color:#e53935;font-size:13px;margin-bottom:10px;display:none;">비밀번호가 틀렸습니다</div>
-    <button onclick="checkPw()" style="width:100%;padding:12px;background:linear-gradient(135deg,#2196F3,#1565C0);color:white;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">입장하기</button>
-  </div>
-</div>
-
 <!-- Header -->
 <div class="header">
   <div>
     <h1>4대보험 자료관리</h1>
     <span class="sync-info"><span class="sync-dot" id="syncDot" style="background:#FF9800"></span><span id="syncText">연결 중...</span></span>
   </div>
-</div>
-
-<!-- Nickname -->
-<div class="nickname-setup" id="nicknameSetup" style="display:none;">
-  <p style="font-size:14px;font-weight:600;margin-bottom:10px;">닉네임을 설정해주세요</p>
-  <input type="text" id="nicknameInput" placeholder="닉네임" maxlength="10">
-  <button onclick="saveNickname()">확인</button>
 </div>
 
 <!-- List Page -->
