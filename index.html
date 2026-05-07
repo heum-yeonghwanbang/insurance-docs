@@ -30,21 +30,39 @@
   </div>
 </div>
 
-<!-- Gallery Page -->
+<!-- Analysis Page -->
 <div class="page" id="pageGallery">
   <div class="content">
     <div class="gallery-header">
-      <h3>자료 갤러리</h3>
-      <span class="count" id="galleryCount">0개 자료</span>
+      <h3>자료 분석</h3>
+      <span class="count" id="analysisCount">0개 자료</span>
     </div>
     <div class="gallery-filter">
-      <button data-filter="all" class="active" onclick="setGalleryFilter('all')">전체</button>
-      <button data-filter="0" onclick="setGalleryFilter('0')">&#x1F3E6; 국민연금</button>
-      <button data-filter="1" onclick="setGalleryFilter('1')">&#x1F6E1;&#xFE0F; 고용/산재</button>
-      <button data-filter="2" onclick="setGalleryFilter('2')">&#x1F3E5; 건강/요양</button>
-      <button data-filter="3" onclick="setGalleryFilter('3')">&#x1F517; 연계센터등</button>
+      <button data-filter="all" class="active" onclick="setAnalysisFilter('all')">전체</button>
+      <button data-filter="0" onclick="setAnalysisFilter('0')">&#x1F3E6; 국민연금</button>
+      <button data-filter="1" onclick="setAnalysisFilter('1')">&#x1F6E1;&#xFE0F; 고용/산재</button>
+      <button data-filter="2" onclick="setAnalysisFilter('2')">&#x1F3E5; 건강/요양</button>
+      <button data-filter="3" onclick="setAnalysisFilter('3')">&#x1F517; 연계센터등</button>
     </div>
-    <div class="gallery-grid" id="galleryGrid"></div>
+    <div id="analysisList"></div>
+  </div>
+</div>
+
+<!-- Analysis Modal -->
+<div class="modal-overlay" id="analysisModal">
+  <div class="modal">
+    <h2>분석 작성</h2>
+    <label>원본 자료</label>
+    <div class="analysis-modal-ref">
+      <strong id="analysisModalTitle"></strong><br>
+      <span id="analysisModalBody"></span>
+    </div>
+    <label>분석 내용</label>
+    <textarea id="analysisText" placeholder="이 자료에 대한 분석, 메모, 주의사항 등을 작성하세요..." style="height:200px;"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeAnalysisModal()">취소</button>
+      <button class="btn-save" onclick="saveAnalysis()">저장</button>
+    </div>
   </div>
 </div>
 
@@ -64,7 +82,7 @@
     <span class="nav-icon">&#x1F4CB;</span>자료
   </div>
   <div class="nav-item" id="navGallery" onclick="switchPage('gallery')">
-    <span class="nav-icon">&#x1F5BC;&#xFE0F;</span>갤러리
+    <span class="nav-icon">&#x1F50D;</span>분석
   </div>
   <div class="nav-item" id="navStats" onclick="switchPage('stats')">
     <span class="nav-icon">&#x1F4CA;</span>통계

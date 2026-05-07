@@ -1,74 +1,78 @@
-// === Gallery View (replaces jar) ===
-let galleryFilter = 'all';
+// === Analysis Page ===
+let analysisFilter = 'all';
 
-function renderGallery() {
-  let filtered = galleryFilter === 'all' ? entries : entries.filter(e => e.category === parseInt(galleryFilter));
+function renderAnalysis() {
+  let filtered = analysisFilter === 'all' ? entries : entries.filter(e => e.category === parseInt(analysisFilter));
   filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  document.getElementById('galleryCount').textContent = filtered.length + '개 자료';
+  document.getElementById('analysisCount').textContent = filtered.length + '개 자료';
 
-  // Filter buttons
   document.querySelectorAll('.gallery-filter button').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.filter === galleryFilter);
+    btn.classList.toggle('active', btn.dataset.filter === analysisFilter);
   });
 
-  const grid = document.getElementById('galleryGrid');
+  const container = document.getElementById('analysisList');
   if (filtered.length === 0) {
-    grid.innerHTML = '<div class="empty-msg" style="grid-column:1/-1;">자료가 없습니다.</div>';
+    container.innerHTML = '<div class="empty-msg">자료가 없습니다.</div>';
     return;
   }
 
-  grid.innerHTML = filtered.map(e => {
+  container.innerHTML = filtered.map(e => {
     const cat = CATEGORIES[e.category] || CATEGORIES[0];
-    const hasImg = e.image && e.image.url;
-    const imgHtml = hasImg
-      ? '<div class="gc-img"><img src="' + escHtml(e.image.url) + '" alt=""></div>'
-      : '<div class="gc-img">' + cat.icon + '</div>';
-    const fileHtml = e.file ? '<div class="gc-file">&#x1F4CE; 첨부파일</div>' : '';
-    return '<div class="gallery-card" onclick="showDetail(\'' + e.id + '\')">' +
-      imgHtml +
-      '<div class="gc-body">' +
-        '<span class="gc-cat" style="background:' + cat.color + '">' + cat.name + '</span>' +
-        '<div class="gc-title">' + escHtml(e.title) + '</div>' +
-        '<div class="gc-meta">' + escHtml(e.author || '') + ' · ' + formatDate(e.date) + '</div>' +
-        fileHtml +
-      '</div></div>';
+    const hasAnalysis = e.analysis && e.analysis.trim();
+    const analysisHtml = hasAnalysis
+      ? '<div class="analysis-content">' + escHtml(e.analysis) + '</div>'
+      : '<div class="analysis-empty">아직 분석이 작성되지 않았습니다.</div>';
+    const editBtn = isAdmin
+      ? '<button class="analysis-edit-btn" onclick="openAnalysisModal(\'' + e.id + '\')">' + (hasAnalysis ? '분석 수정' : '+ 분석 작성') + '</button>'
+      : '';
+    const tags = (e.tags || []).map(t => '<span class="doc-tag">' + escHtml(t) + '</span>').join('');
+
+    return '<div class="analysis-card">' +
+      '<div class="analysis-header">' +
+        '<span class="category-badge" style="background:' + cat.color + '">' + cat.icon + ' ' + cat.name + '</span>' +
+        '<span class="analysis-date">' + formatDate(e.date) + '</span>' +
+      '</div>' +
+      '<div class="analysis-title">' + escHtml(e.title) + '</div>' +
+      '<div class="analysis-body">' + escHtml(e.body) + '</div>' +
+      (tags ? '<div class="doc-tags" style="margin:8px 0;">' + tags + '</div>' : '') +
+      '<div class="analysis-divider"></div>' +
+      '<div class="analysis-label">' + (hasAnalysis ? '&#x1F4DD; 분석 내용' : '&#x1F4AD; 분석') + '</div>' +
+      analysisHtml +
+      editBtn +
+    '</div>';
   }).join('');
 }
 
-function setGalleryFilter(f) {
-  galleryFilter = f;
-  renderGallery();
+function setAnalysisFilter(f) {
+  analysisFilter = f;
+  renderAnalysis();
 }
 
-function showDetail(id) {
+// === Analysis Modal ===
+let analysisTargetId = null;
+
+function openAnalysisModal(id) {
+  if (!isAdmin) { alert('관리자만 분석을 작성할 수 있습니다'); return; }
   const entry = entries.find(e => e.id === id);
   if (!entry) return;
-  const cat = CATEGORIES[entry.category] || CATEGORIES[0];
-
-  let html = '';
-  if (entry.image && entry.image.url) {
-    html += '<img class="dc-img" src="' + escHtml(entry.image.url) + '">';
-  }
-  html += '<span class="dc-cat" style="background:' + cat.color + '">' + cat.icon + ' ' + cat.name + '</span>';
-  html += '<div class="dc-title">' + escHtml(entry.title) + '</div>';
-  html += '<div class="dc-meta">' + escHtml(entry.author || '익명') + ' · ' + formatDate(entry.date) + '</div>';
-  html += '<div class="dc-body">' + escHtml(entry.body) + '</div>';
-
-  if (entry.file) {
-    html += '<a class="dc-file" href="' + escHtml(entry.file.url) + '" target="_blank" download>&#x1F4CE; ' + escHtml(entry.file.name) + '</a>';
-  }
-
-  if (entry.tags && entry.tags.length) {
-    html += '<div class="dc-tags">' + entry.tags.map(t => '<span class="dc-tag">' + escHtml(t) + '</span>').join('') + '</div>';
-  }
-
-  html += '<button class="detail-close" onclick="closeDetail()">닫기</button>';
-
-  document.getElementById('detailContent').innerHTML = html;
-  document.getElementById('detailPopup').classList.add('show');
+  analysisTargetId = id;
+  document.getElementById('analysisModalTitle').textContent = entry.title;
+  document.getElementById('analysisModalBody').textContent = entry.body;
+  document.getElementById('analysisText').value = entry.analysis || '';
+  document.getElementById('analysisModal').classList.add('show');
 }
 
-function closeDetail() {
-  document.getElementById('detailPopup').classList.remove('show');
+function closeAnalysisModal() {
+  document.getElementById('analysisModal').classList.remove('show');
+}
+
+async function saveAnalysis() {
+  const text = document.getElementById('analysisText').value.trim();
+  const entry = entries.find(e => e.id === analysisTargetId);
+  if (!entry) return;
+  entry.analysis = text;
+  await saveData();
+  closeAnalysisModal();
+  renderAnalysis();
 }

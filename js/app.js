@@ -8,7 +8,7 @@ function switchPage(page) {
     if (el) el.classList.toggle('active', page === key);
     if (nav) nav.classList.toggle('active', page === key);
   });
-  if (page === 'gallery') renderGallery();
+  if (page === 'gallery') renderAnalysis();
   if (page === 'stats') renderStats();
   if (page === 'list') loadData();
 }

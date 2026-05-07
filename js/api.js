@@ -25,7 +25,7 @@ async function loadData() {
   }
   renderTabs();
   renderDocs();
-  if (activePage === 'gallery') renderGallery();
+  if (activePage === 'gallery') renderAnalysis();
   if (activePage === 'stats') renderStats();
 }
 
